@@ -58,8 +58,8 @@ async function searchSupabase(userQuestion) {
         return "No se pudo generar el vector de búsqueda para tu pregunta.";
     }
 
-    const matchThreshold = 0.4;
-    const matchCount = 3;
+    const matchThreshold = 0.3;
+    const matchCount = 7;
 
     console.log(`[searchSupabase] Llamando a la función RPC 'match_informacion' con umbral: ${matchThreshold}, cantidad: ${matchCount}`);
     try {
