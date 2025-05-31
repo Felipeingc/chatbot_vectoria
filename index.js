@@ -30,12 +30,6 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// --- NUEVA FUNCIÓN searchSupabase CON BÚSQUEDA SEMÁNTICA ---
-/**
- * Realiza una búsqueda semántica en Supabase usando embeddings y la función RPC.
- * @param {string} userQuestion La pregunta del usuario.
- * @returns {Promise<string>} El contexto encontrado o un mensaje indicando que no se encontró/error.
- */
 async function searchSupabase(userQuestion) {
     console.log(`[searchSupabase] Recibida pregunta del usuario: "${userQuestion}"`);
 
@@ -43,15 +37,14 @@ async function searchSupabase(userQuestion) {
         return "No se proporcionó una pregunta para buscar.";
     }
 
-    // 1. Generar embedding para la pregunta del usuario usando Gemini
-    const embeddingModelName = "text-embedding-004"; // Modelo de embedding que usaste para indexar
+    const embeddingModelName = "text-embedding-004";
     const embeddingGenModel = genAI.getGenerativeModel({ model: embeddingModelName });
 
     let queryEmbeddingVector;
     try {
         console.log(`[searchSupabase] Generando embedding para la consulta con el modelo: ${embeddingModelName}...`);
         const result = await embeddingGenModel.embedContent({
-            content: { parts: [{ text: userQuestion }] }, // <--- SOLUCIÓN AQUÍ
+            content: { parts: [{ text: userQuestion }] }, // <<< --- CAMBIO IMPORTANTE AQUÍ ---
             taskType: "RETRIEVAL_QUERY"
         });
         queryEmbeddingVector = result.embedding.values;
@@ -62,20 +55,18 @@ async function searchSupabase(userQuestion) {
     }
 
     if (!queryEmbeddingVector) {
-        // Esto no debería pasar si el try-catch anterior funciona, pero por si acaso.
         return "No se pudo generar el vector de búsqueda para tu pregunta.";
     }
 
-    // 2. Llamar a la función RPC 'match_informacion' en Supabase
-    const matchThreshold = 0.7; // Umbral de similitud: 0.0 a 1.0. Más alto = más estricto. ¡Puedes ajustarlo!
-    const matchCount = 3;       // Número de coincidencias a obtener. ¡Puedes ajustarlo!
+    const matchThreshold = 0.7;
+    const matchCount = 3;
 
     console.log(`[searchSupabase] Llamando a la función RPC 'match_informacion' con umbral: ${matchThreshold}, cantidad: ${matchCount}`);
     try {
         const { data, error } = await supabase.rpc('match_informacion', {
-            query_embedding: queryEmbeddingVector, // El nombre del parámetro debe coincidir con tu función SQL
-            match_threshold: matchThreshold,       // Nombre del parámetro
-            match_count: matchCount                // Nombre del parámetro
+            query_embedding: queryEmbeddingVector,
+            match_threshold: matchThreshold,
+            match_count: matchCount
         });
 
         if (error) {
@@ -85,15 +76,12 @@ async function searchSupabase(userQuestion) {
 
         if (data && data.length > 0) {
             console.log(`[searchSupabase] Se encontraron ${data.length} coincidencias desde RPC.`);
-            // Formatear el contexto para que Gemini lo use
             let context = "Basado en la información encontrada en la base de datos con búsqueda semántica:\n";
             data.forEach((item, index) => {
                 context += `\nFragmento relevante ${index + 1} (Similitud: ${item.similarity.toFixed(2)}):\n`;
-                // Opcional: Podrías incluir la pregunta original de la BD si ayuda al contexto
-                // context += `- Pregunta original de la BD: ${item.pregunta_original}\n`;
                 context += `- Respuesta: ${item.respuesta_original}\n`;
             });
-            console.log("[searchSupabase] Contexto preparado para Gemini:", context.substring(0, 500) + "..."); // Imprime solo una parte del contexto si es muy largo
+            console.log("[searchSupabase] Contexto preparado para Gemini:", context.substring(0, 500) + "...");
             return context;
         } else {
             console.log('[searchSupabase] No se encontraron coincidencias en la base de datos para la búsqueda semántica.');
@@ -104,7 +92,6 @@ async function searchSupabase(userQuestion) {
         return `Ocurrió una excepción durante la búsqueda semántica en la base de datos: ${e.message}`;
     }
 }
-// --- FIN DE LA NUEVA FUNCIÓN searchSupabase ---
 
 // Endpoint para el streaming de respuestas del chatbot
 app.post('/stream', async (req, res) => {
@@ -137,10 +124,9 @@ app.post('/stream', async (req, res) => {
       return;
     }
 
-    // 1. Buscar contexto en Supabase (usando la nueva función searchSupabase)
-    let contextFromSupabase = "No se pudo realizar la búsqueda en la base de datos o no se encontró información relevante."; // Default
+    let contextFromSupabase = "No se pudo realizar la búsqueda en la base de datos o no se encontró información relevante.";
     try {
-      const searchResult = await searchSupabase(userQuestion); // <--- SE LLAMA A LA NUEVA FUNCIÓN AQUÍ
+      const searchResult = await searchSupabase(userQuestion);
       if (searchResult) {
         contextFromSupabase = searchResult;
       }
@@ -149,7 +135,6 @@ app.post('/stream', async (req, res) => {
       contextFromSupabase = `Error al acceder a la base de datos para obtener contexto: ${e.message}`;
     }
 
-    // 2. Construir el prompt para Gemini con el contexto
     const systemInstruction = `Eres Borges IA, un asistente virtual experto. Tu tarea es responder la pregunta del usuario.
 Utiliza la siguiente información extraída de una base de datos para fundamentar tu respuesta.
 Si la pregunta puede responderse con la información proporcionada, basa tu respuesta *principalmente* en ella.
@@ -171,7 +156,7 @@ ${contextFromSupabase}
       }
     }
     
-    const modelName = "gemini-1.5-flash-latest"; // O el modelo que prefieras
+    const modelName = "gemini-1.5-flash-latest";
     const model = genAI.getGenerativeModel({ model: modelName });
 
     const streamingResp = await model.generateContentStream({ contents: modifiedHistoryForGemini });
