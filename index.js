@@ -51,8 +51,8 @@ async function searchSupabase(userQuestion) {
     try {
         console.log(`[searchSupabase] Generando embedding para la consulta con el modelo: ${embeddingModelName}...`);
         const result = await embeddingGenModel.embedContent({
-            content: userQuestion,
-            taskType: "RETRIEVAL_QUERY" // Importante: para las preguntas de los usuarios en tiempo real
+            content: { parts: [{ text: userQuestion }] }, // <--- SOLUCIÓN AQUÍ
+            taskType: "RETRIEVAL_QUERY"
         });
         queryEmbeddingVector = result.embedding.values;
         console.log("[searchSupabase] Embedding para la consulta del usuario generado exitosamente.");
