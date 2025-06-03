@@ -128,7 +128,7 @@ async function detectarIntencionAgendamiento(textoUsuario, historialConversacion
 
         const prompt = `${promptContext}Eres un asistente clasificador de intenciones. Analiza el ÚLTIMO mensaje del usuario (considerando el historial previo si se proporciona). Tu única tarea es determinar si el usuario está expresando la intención de agendar una reunión, coordinar una llamada, pedir una cita, o si está preguntando por disponibilidad para hablar. Responde ÚNICAMENTE con una de estas dos palabras: 'AGENDAR_REUNION' si la intención es clara en el último mensaje, o 'OTRA_COSA' en caso contrario. Último mensaje del usuario (ya incluido en el historial si se proporcionó): "${textoUsuario}"`;
         
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-05-20" });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text().trim().toUpperCase(); // Convertir a mayúsculas para comparación robusta
@@ -181,7 +181,7 @@ No añadas explicaciones ni texto adicional fuera del JSON. Solo el JSON.
     // y extraerá todo lo que pueda.
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-05-20" });
         const generationConfig = { responseMimeType: "application/json" }; // Pedir JSON directamente
         const result = await model.generateContent({
             contents: [{ role: "user", parts: [{text: promptSlotFilling }] }],
@@ -382,7 +382,7 @@ ${contextFromSupabase}
             { role: "user", parts: [{ text: `${systemInstruction}\nPregunta original del usuario: ${userQuestion}` }] }
         ];
         
-        const modelName = "gemini-2.0-flash"; // Modelo para las respuestas RAG
+        const modelName = "gemini-2.5-flash-preview-05-20"; // Modelo para las respuestas RAG
         const model = genAI.getGenerativeModel({ model: modelName });
 
         console.log("[MainStream] Enviando a Gemini para respuesta RAG...");
