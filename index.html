@@ -5,7 +5,7 @@
     <title>Chatbot Minimalista</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
     html, body {
@@ -13,6 +13,8 @@
         padding: 0;
         overflow-x: hidden;
         font-family: 'Inter', sans-serif;
+        font-weight: 350;
+        background: #fff !important;
     }
 
     #contenedor, .main, #main-content {
@@ -29,7 +31,7 @@
         width: 100% !important;
         max-width: 100% !important;
         font-family: 'Inter', sans-serif;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -39,7 +41,7 @@
     .chat-container {
         width: 100%;
         flex-grow: 1;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         display: flex;
         flex-direction: row;
         overflow: hidden;
@@ -50,7 +52,7 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         transition: margin-left 0.3s;
         overflow-y: auto;
         position: relative;
@@ -58,6 +60,7 @@
 
     .chat-inner {
         width: 55%;
+        max-width: 750px;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
@@ -65,7 +68,7 @@
     }
 
     .chat-header {
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         color: #000;
         padding: 20px;
         text-align: center;
@@ -82,7 +85,7 @@
     }
 
     #chatbox {
-        padding: 30px;
+        padding: 30px 30px 30px 15px;
         flex-grow: 1;
         overflow-y: visible;
     }
@@ -92,8 +95,7 @@
         align-items: center;
         padding: 10px 20px;
         transition: all 0.5s ease;
-        background-color: #f9f9f9;
-        /* border-top: 1px solid #e0e0e0; */ /* LÍNEA ELIMINADA */
+        background-color: #ffffff;
         position: sticky;
         bottom: 0;
         z-index: 10;
@@ -202,8 +204,24 @@
         align-items: flex-start;
     }
     .chat-message.user { justify-content: flex-end; }
-    .chat-message.user .avatar { order: 2; margin-left: 5px; margin-right: 0; }
-    .chat-message.bot .avatar { margin-right: 0px !important; margin-left: -10px !important; }
+
+    .chat-message.bot.is-typing { /* Mantenemos para alineación del avatar con typing-dots */
+        align-items: center;
+    }
+
+    .avatar {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        object-fit: contain;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+    .chat-message.user .avatar {
+        order: 2;
+        margin-left: 10px;
+        margin-right: 0;
+    }
 
     .chat-message.bot .bot-content {
         margin-left: 0 !important;
@@ -224,18 +242,15 @@
         padding: 12px 15px;
         border-radius: 30px;
         max-width: 70%;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         word-wrap: break-word;
         line-height: 1.6;
         font-family: 'Inter', sans-serif;
-        font-size: 16px;
+        font-size: 15.5px;
         text-align: justify;
         margin-left: 5px;
         border: 1px solid #2c3e50;
         white-space: normal;
         overflow-wrap: break-word;
-    }
-    .chat-bubble {
         max-width: calc(100% - 70px) !important;
         border-radius: 16px !important;
         margin-left: 10px !important;
@@ -258,11 +273,9 @@
     .chat-message.user .chat-bubble {
         border: none;
         border-radius: 22px !important;
-        background-color: #f0f0f0;
-        color: #000000;
+        background-color: #f2f2f2;
+        color: #364152;
     }
-
-    .avatar { display: none !important; }
 
     .bot-content {
         position: relative;
@@ -278,7 +291,7 @@
         font-family: 'Inter', sans-serif;
         font-size: 16px;
         line-height: 1.6;
-        color: #000;
+        color: #364152; 
         text-align: justify;
         word-wrap: break-word;
         white-space: normal;
@@ -286,48 +299,40 @@
     }
     .chat-message.bot .chat-text {
         padding-top: 0px;
-        padding-bottom: 0px; /* Asegurar que no haya padding abajo */
-        padding-left: 0px;  /* Ya era 0 */
-        padding-right: 0px; /* Ya era 0 */
-        text-align: left;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        text-align: justify;
+        line-height: 1.5;
     }
 
-    /* NUEVO: Eliminar margen inferior del último elemento dentro del texto del bot */
     .chat-message.bot .chat-text > *:last-child {
         margin-bottom: 0 !important;
     }
 
-    /* === INICIO: AJUSTE BOTÓN COPIAR === */
     .copy-btn {
         position: relative !important;
-        /* margin-top: 8px !important; */ /* Valor anterior */
-        margin-top: 8px !important;  /* <<< CAMBIO: Ajustado para mejor espaciado después de eliminar margin del texto. Prueba 4px a 8px. */
-        margin-bottom: 5px !important; /* Mantenemos un pequeño margen inferior */
-        width: 16px;
-        height: 16px;
+        margin-top: 8px !important;
+        margin-bottom: 5px !important;
+        width: 18px;
+        height: 18px;
         cursor: pointer;
         --tooltip-text: 'Copiar';
-        /* NUEVO: Transición para el fondo y radio para el hover */
         transition: background-color 0.2s ease-in-out;
-        border-radius: 4px; /* Opcional: para que el fondo del hover sea redondeado */
+        border-radius: 4px;
+        color: #AAAAAA;
     }
-    /* === FIN: AJUSTE BOTÓN COPIAR === */
-
     .copy-btn svg {
         width: 100%;
         height: 100%;
-        /* NUEVO: Transición para el color del SVG */
-        transition: fill 0.2s ease-in-out;
+        transition: stroke 0.2s ease-in-out;
     }
-
-    /* NUEVO: Efecto hover para el botón de copiar */
     .copy-btn:hover {
-        background-color: #e0e0e0; /* Color de fondo sutil al hacer hover */
+        background-color: #e0e0e0;
     }
     .copy-btn:hover svg {
-        fill: #333333; /* Color ligeramente más oscuro para el SVG al hacer hover */
+        stroke: #333333;
     }
-
     .copy-btn::after {
         content: var(--tooltip-text);
         position: absolute;
@@ -369,7 +374,6 @@
         overflow-y: auto;
         max-height: 300px;
     }
-
     .chat-input textarea::placeholder {
         font-size: 16px !important;
         font-family: 'Inter', sans-serif;
@@ -378,7 +382,7 @@
     .send-button {
         position: absolute;
         right: 10px;
-        bottom: 20px; /* <<< CAMBIO: Incrementado de 10px para subirlo ligeramente */
+        bottom: 20px;
         border-radius: 50%;
         padding: 10px;
         border: none;
@@ -395,27 +399,13 @@
         height: 20px;
     }
 
-    .chat-message.typing {
-        margin-bottom: 20px;
-        display: flex;
-        align-items: flex-start;
-    }
-    .chat-message.typing .chat-text {
-        display: flex;
-        align-items: center;
-        margin-top: 0;
-        padding-left: 0;
-        font-family: 'Inter', sans-serif;
-    }
-    .chat-message.typing .avatar {
-        margin-right: 10px;
-        margin-left: 0;
-    }
     .typing-dots {
         display: flex;
         align-items: center;
         margin-left: 0px;
-        padding: 5px 0;
+        padding: 8px 0;
+        position: relative;
+        top: 15px;
     }
     .typing-dots span {
         display: inline-block;
@@ -438,7 +428,7 @@
 
     .chat-inner.initial-state {
         position: absolute;
-        top: 50%;
+        top: 38%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 55%;
@@ -451,7 +441,7 @@
     }
     .chat-inner.initial-state #initial-message {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: -45px;
     }
     .chat-inner.initial-state #chatbox {
         display: none;
@@ -466,16 +456,6 @@
     .sep { display: none; }
     body.sidebar-general-open .faq-btn { z-index: 0; }
 
-    .bot-message-render-fade-in {
-        opacity: 0;
-        animation: finalBotMessageFadeIn 0.4s ease-out forwards;
-    }
-
-    @keyframes finalBotMessageFadeIn {
-        from { opacity: 0; transform: translateY(5px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
     .chat-message.bot .chat-text table {
         border-collapse: collapse;
         margin: 1em 0;
@@ -485,7 +465,6 @@
         border: 1px solid #ccc;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-
     .chat-message.bot .chat-text th,
     .chat-message.bot .chat-text td {
         border: 1px solid #ddd;
@@ -494,16 +473,101 @@
         line-height: 1.3;
         font-family: 'Inter', sans-serif;
     }
-
     .chat-message.bot .chat-text th {
         background-color: #f0f0f0;
         font-weight: bold;
         color: #333;
     }
-
     .chat-message.bot .chat-text tr:nth-child(even) td {
         background-color: #f9f9f9;
     }
+
+    /* === INICIO: NUEVAS ANIMACIONES SUAVES PARA MENSAJES === */
+
+    /* Animación para la aparición de mensajes del USUARIO */
+    .chat-message.user.message-appear-user {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97); /* Un poco más de movimiento y escala */
+    animation: fadeInSmoothUser 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards; /* Un poco más lento */
+}
+
+@keyframes fadeInSmoothUser {
+    0% {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Animación para la aparición INICIAL del GLOBO del BOT */
+.chat-message.bot.message-appear-bot {
+    opacity: 0;
+    transform: translateY(18px); /* Un poco más de movimiento */
+    filter: blur(4px); /* Un poco más de desenfoque inicial */
+    animation: fadeInBotMessageContainer 0.45s cubic-bezier(.43,.08,.21,.98) forwards; /* Un poco más lento */
+}
+
+@keyframes fadeInBotMessageContainer {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+        filter: blur(4px);
+    }
+    65% {
+        filter: blur(1.5px); /* Ajuste intermedio del desenfoque */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* Animación para el TEXTO del BOT cuando reemplaza los puntos o se carga */
+.bot-text-fade-in {
+    opacity: 0;
+    animation: fadeInBotTextContent 0.55s ease-out forwards; /* Un poco más lento */
+    animation-delay: 0.15s; /* Un poquito más de retraso para asegurar que el contenedor esté listo */
+}
+
+@keyframes fadeInBotTextContent {
+    from {
+        opacity: 0;
+        transform: translateY(8px); /* Sutil deslizamiento hacia arriba del texto, un poco más */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    /* === FIN: NUEVAS ANIMACIONES SUAVES PARA MENSAJES === */
+
+    /* Elimina o comenta tu antigua .bot-message-render-fade-in y .chat-message.bot.fade-in si ya no las necesitas */
+    /* .bot-message-render-fade-in { ... } */
+    /* @keyframes finalBotMessageFadeIn { ... } */
+    /* .chat-message.bot.fade-in { ... } */ /* Esta ha sido reemplazada por .message-appear-bot */
+    /* @keyframes fadeInBotLechat { ... } */ /* Esta ha sido reemplazada por fadeInBotMessageContainer */
+    .chat-message.bot .chat-text ol li,
+.chat-message.bot .chat-text ul li {
+    margin-bottom: 0.5em; /* o el espacio que prefieras */
+}
+
+/* === Transición SUAVE para aparición del placeholder (NUEVO MÉTODO) === */
+
+textarea#input::placeholder {
+    opacity: 0; /* El placeholder comienza invisible */
+    transition: opacity 3.5s ease-out; /* Definimos la transición para la opacidad: duración y suavizado.
+                                          El retraso lo controlaremos con JavaScript. */
+}
+
+/* Cuando el textarea TENGA la clase 'animar-placeholder', su placeholder se hará visible */
+textarea#input.animar-placeholder::placeholder {
+    opacity: 1;
+}
+
 </style>
 </head>
 <body>
@@ -513,7 +577,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#434343">
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm120-80v-560H200v560h120Zm80 0h360v-560H400v560Zm-80 0H200h120Z"/>
             </svg>
-            <span class="sidebar-text">BORGES IA</span>
+            <img src="https://imgur.com/2NsSMao.png" alt="Imagen" style="display:inline-block; width:110px; height:28px; vertical-align:middle; margin-left:8px;">
         </button>
 
         <div id="faq-panel" class="faq-panel">
@@ -529,18 +593,11 @@
                 <div id="chatbox" class="chat-box"></div>
 
                 <div id="initial-message" style="text-align: center; padding: 10px; font-size: 27px; color: #000; font-family: 'Inter', sans-serif;">
-                    <img src="https://imgur.com/0nvlYQO.png" alt="Imagen" style="display: block; margin: 0 auto 10px auto; width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
-                    <span id="greeting-text">¿En qué puedo ayudarte hoy?</span>
+                   <img src="https://imgur.com/EmzziUM.gif" alt="Imagen" style="display: block; margin: 0 auto 0px auto; width: 280px; height: 140px; border-radius: 0;">
+
+                    
                 </div>
-                <div id="loading" class="chat-message bot typing" style="display: none;">
-                    <div class="chat-text">
-                        <div class="typing-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
+            
 
                 <div class="chat-input">
                     <div class="input-container">
@@ -559,11 +616,7 @@
     // === Variable Global para el Historial de Conversación ===
     let conversationHistory = [];
 
-    // (TYPING_SPEED ya no se usa con este nuevo efecto)
-
     // === Funciones Auxiliares y de UI (toggleFAQ, checkEnter, listeners de textarea) ===
-    // (Tu código existente para toggleFAQ, checkEnter y los listeners del textarea aquí)
-    // ... (asegúrate que estén aquí y funcionen como antes) ...
     function toggleFAQ() {
         const panel = document.getElementById("faq-panel");
         panel.classList.toggle("open");
@@ -573,12 +626,12 @@
             faqBtn.classList.add("open");
             faqBtn.setAttribute("data-tooltip", "Cerrar");
             faqBtn.querySelector("svg path").setAttribute("d", "M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z");
-            sidebarText.style.display = 'none';
+            if(sidebarText) sidebarText.style.display = 'none';
         } else {
             faqBtn.classList.remove("open");
             faqBtn.setAttribute("data-tooltip", "Abrir");
             faqBtn.querySelector("svg path").setAttribute("d", "M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm120-80v-560H200v560h120Zm80 0h360v-560H400v560Zm-80 0H200h120Z");
-            sidebarText.style.display = 'inline-block';
+            if(sidebarText) sidebarText.style.display = 'inline-block';
         }
     }
 
@@ -589,11 +642,9 @@
         }
     }
 
-
-
-
     const textareaInput = document.getElementById('input');
     const sendButtonElement = document.querySelector('.send-button');
+    const chatContentScroller = document.querySelector('.chat-content');
 
     if (textareaInput) {
         textareaInput.addEventListener('input', function() {
@@ -612,194 +663,251 @@
     }
     // === Fin Funciones Auxiliares ===
 
-
-    // Configuración global para Marked.js (debe estar después de incluir el script de Marked.js)
     if (typeof marked === 'object' && typeof marked.parse === 'function') {
-        marked.setOptions({
-            gfm: true,
-            breaks: true,
-            pedantic: false
-        });
+        console.log("Marked.js está disponible, pero NO se usará para formatear las respuestas del bot.");
     }
 
-    async function sendMessage() {
-        const initialMsg = document.getElementById('initial-message');
-        const chatContentScroller = document.querySelector('.chat-content');
-        const chatbox = document.getElementById('chatbox');
+async function sendMessage() {
+    const initialMsg = document.getElementById('initial-message');
+    const chatbox = document.getElementById('chatbox');
+    const textareaInput = document.getElementById('input');
+    const chatContentScroller = document.querySelector('.chat-content');
 
-        if (initialMsg && initialMsg.style.display !== 'none') {
-            initialMsg.style.display = 'none';
-            document.querySelector('.chat-inner').classList.remove('initial-state');
-            chatbox.style.display = 'block';
+    if (initialMsg && initialMsg.style.display !== 'none') {
+        initialMsg.style.display = 'none';
+        if(document.querySelector('.chat-inner')) document.querySelector('.chat-inner').classList.remove('initial-state');
+        if (chatbox) chatbox.style.display = 'block';
+    }
+
+    const userMessage = textareaInput.value.trim();
+    if (!userMessage) return;
+
+    const userMessageElement = document.createElement('div');
+    userMessageElement.classList.add('chat-message', 'user', 'message-appear-user');
+    const userBubble = document.createElement('div');
+    userBubble.classList.add('chat-bubble');
+    userBubble.innerHTML = userMessage.replace(/\n/g, '<br>'); // El mensaje del usuario es texto plano, convertimos saltos de línea a <br>
+    userMessageElement.appendChild(userBubble);
+    if (chatbox) chatbox.appendChild(userMessageElement);
+
+    conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+    textareaInput.value = '';
+    textareaInput.dispatchEvent(new Event('input'));
+
+    if (chatContentScroller) chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
+
+    const botMessageElement = document.createElement('div');
+    botMessageElement.classList.add('chat-message', 'bot', 'message-appear-bot');
+    botMessageElement.classList.add('is-typing');
+
+    const botAvatar = document.createElement('img');
+    botAvatar.src = 'https://i.imgur.com/durd2BE.png';
+    botAvatar.alt = 'Bot Avatar';
+    botAvatar.classList.add('avatar');
+    botMessageElement.appendChild(botAvatar);
+
+    const contentWrapper = document.createElement('div');
+    contentWrapper.classList.add('bot-content');
+    
+    const chatBubbleForBotText = document.createElement('div');
+    chatBubbleForBotText.classList.add('chat-bubble');
+    
+    const textContainer = document.createElement('div');
+    textContainer.classList.add('chat-text');
+    
+    textContainer.innerHTML = `
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>`;
+    
+    chatBubbleForBotText.appendChild(textContainer);
+    contentWrapper.appendChild(chatBubbleForBotText);
+    
+    const copyBtn = document.createElement('div');
+    copyBtn.classList.add('copy-btn');
+    copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>`;
+    copyBtn.style.display = 'none';
+    contentWrapper.appendChild(copyBtn);
+    
+    botMessageElement.appendChild(contentWrapper);
+    
+    if (chatbox) chatbox.appendChild(botMessageElement);
+    
+    if (chatContentScroller) chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
+
+    let accumulatedHtmlBotResponse = ""; // Esta variable contendrá el Markdown acumulado
+    let streamEndedCleanly = false;
+    let firstChunkReceived = false;
+
+    copyBtn.onclick = function() {
+        // Para copiar, es mejor copiar el texto interpretado (innerText) y no el Markdown crudo.
+        // Si marked.js ya convirtió a HTML, innerText dará el texto visible.
+        navigator.clipboard.writeText(textContainer.innerText || textContainer.textContent);
+        copyBtn.style.setProperty('--tooltip-text', "'Copiado'");
+        setTimeout(() => copyBtn.style.setProperty('--tooltip-text', "'Copiar'"), 1500);
+    };
+
+    try {
+        const payloadForBackend = { history: conversationHistory };
+        const response = await fetch('/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payloadForBackend)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error HTTP en fetch:", response.status, response.statusText, errorText);
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        if (!response.body) {
+            throw new Error("La respuesta no tiene cuerpo (body) para leer.");
         }
 
-        const userMessage = textareaInput.value.trim();
-        if (!userMessage) return;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let done = false;
 
-        const userMessageElement = document.createElement('div');
-        userMessageElement.classList.add('chat-message', 'user');
-        const userBubble = document.createElement('div');
-        userBubble.classList.add('chat-bubble');
-        userBubble.innerHTML = userMessage.replace(/\n/g, '<br>');
-        userMessageElement.appendChild(userBubble);
-        chatbox.appendChild(userMessageElement);
+        while (!done) {
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
 
-        conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            if (value) {
+                if (!firstChunkReceived) {
+                    botMessageElement.classList.remove('is-typing');
+                    textContainer.innerHTML = ''; 
+                    textContainer.classList.add('bot-text-fade-in');
+                    firstChunkReceived = true;
+                }
 
-        textareaInput.value = '';
-        textareaInput.dispatchEvent(new Event('input'));
-        document.getElementById('loading').style.display = 'flex';
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const payload = line.replace('data: ', '').trim();
+                        
+                        if (payload === '[END]' || payload.startsWith('[END_OF_')) {
+                            console.log("Stream finalizado con señal:", payload);
+                            streamEndedCleanly = true;
+                            break;
+                        }
+                        if (payload.startsWith('[CONTINUE_')) {
+                            console.log("Señal de continuación recibida:", payload);
+                            continue;
+                        }
+                        if (payload === "") continue;
+
+                        try {
+                            const obj = JSON.parse(payload);
+                            if (obj.texto) {
+                                accumulatedHtmlBotResponse += obj.texto; // Acumular el texto (Markdown)
+                                if (typeof marked === 'function' || (typeof marked === 'object' && typeof marked.parse === 'function')) {
+                                    textContainer.innerHTML = marked.parse(accumulatedHtmlBotResponse);
+                                } else {
+                                    textContainer.innerHTML = accumulatedHtmlBotResponse; // Fallback
+                                }
+                            } else if (obj.error) {
+                                if (!firstChunkReceived) {
+                                     botMessageElement.classList.remove('is-typing');
+                                     textContainer.innerHTML = '';
+                                     textContainer.classList.add('bot-text-fade-in');
+                                }
+                                // Los mensajes de error del bot usualmente no son Markdown complejo
+                                textContainer.innerHTML = `<span style="color:red;">⚠️ Error del bot: ${obj.error}</span>`;
+                                streamEndedCleanly = true;
+                                break;
+                            }
+                        } catch (e) {
+                            console.warn("Payload no JSON (y no señal conocida), tratando como texto directo:", payload);
+                            accumulatedHtmlBotResponse += payload; // Acumular el texto (Markdown)
+                            if (typeof marked === 'function' || (typeof marked === 'object' && typeof marked.parse === 'function')) {
+                                textContainer.innerHTML = marked.parse(accumulatedHtmlBotResponse);
+                            } else {
+                                textContainer.innerHTML = accumulatedHtmlBotResponse; // Fallback
+                            }
+                        }
+                    }
+                }
+                if(streamEndedCleanly) done = true;
+            }
+            if (chatContentScroller) {
+                chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
+            }
+        }
+
+        if (!firstChunkReceived) { 
+            botMessageElement.classList.remove('is-typing');
+            textContainer.innerHTML = ''; 
+            if (!streamEndedCleanly) {
+                 textContainer.innerHTML = `<span style="color:orange;">⚠️ No se recibió respuesta del bot.</span>`;
+                 textContainer.classList.add('bot-text-fade-in'); 
+            }
+        }
         
+        if (accumulatedHtmlBotResponse.trim() !== "") {
+            copyBtn.style.display = 'block';
+            // Guardamos el Markdown original en el historial, o el HTML parseado?
+            // Es común guardar el Markdown crudo, ya que es la "fuente de verdad" del contenido del bot.
+            // El HTML es solo una representación.
+            const lastHistoryTurn = conversationHistory[conversationHistory.length - 1];
+            if (lastHistoryTurn && lastHistoryTurn.role === "user") {
+                conversationHistory.push({ role: "model", parts: [{ text: accumulatedHtmlBotResponse }] }); // Guardar Markdown
+            } else if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length-1].role === "model") {
+                conversationHistory.push({ role: "model", parts: [{ text: accumulatedHtmlBotResponse }] }); // Guardar Markdown
+            } else { 
+                conversationHistory.push({ role: "model", parts: [{ text: accumulatedHtmlBotResponse }] }); // Guardar Markdown
+            }
+
+        } else if (firstChunkReceived && !streamEndedCleanly && textContainer.innerHTML.trim() === "") {
+            // Si se recibieron chunks pero al final no hay nada, o el HTML parseado es vacío.
+            textContainer.innerHTML = `<span style="color:orange;">⚠️ La conexión finalizó o no se recibió respuesta formateada.</span>`;
+            if(!textContainer.classList.contains('bot-text-fade-in')) {
+                textContainer.classList.add('bot-text-fade-in');
+            }
+        }
+
         if (chatContentScroller) {
             chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
         }
 
-        const botMessageElement = document.createElement('div');
-        botMessageElement.classList.add('chat-message', 'bot');
-        const contentWrapper = document.createElement('div');
-        contentWrapper.classList.add('bot-content'); 
-        const chatBubbleForBotText = document.createElement('div'); 
-        chatBubbleForBotText.classList.add('chat-bubble'); 
-        const textContainer = document.createElement('div');
-        textContainer.classList.add('chat-text'); // Este es el contenedor clave para la respuesta del bot
-        chatBubbleForBotText.appendChild(textContainer);
-        contentWrapper.appendChild(chatBubbleForBotText);
-        const copyBtn = document.createElement('div');
-        copyBtn.classList.add('copy-btn');
-        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`;
-        copyBtn.onclick = function() {
-            navigator.clipboard.writeText(messageBeingTyped); // Copia el Markdown crudo acumulado
-            copyBtn.style.setProperty('--tooltip-text', "'Copiado'");
-            setTimeout(() => copyBtn.style.setProperty('--tooltip-text', "'Copiar'"), 1000);
-        };
-        copyBtn.style.display = 'none';
-        contentWrapper.appendChild(copyBtn);
-        botMessageElement.appendChild(contentWrapper);
-        chatbox.appendChild(botMessageElement);
-        
-        if (chatContentScroller) {
-             chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
+    } catch (error) {
+        botMessageElement.classList.remove('is-typing'); 
+        console.error("Error CRÍTICO en sendMessage (fetch/stream):", error);
+        if (textContainer) {
+             textContainer.innerHTML = ''; 
+             textContainer.classList.add('bot-text-fade-in'); 
+             // Mensaje de error crítico, usualmente no es Markdown
+             textContainer.innerHTML = `<div class="chat-text" style="color: red;">Lo siento, ha ocurrido un error de conexión mayor.<br>${error.message}</div>`;
+        } else if (botMessageElement.firstChild && botMessageElement.firstChild.classList.contains('avatar')) {
+            const errorDiv = document.createElement('div');
+            errorDiv.classList.add('bot-content');
+            // Mensaje de error crítico
+            errorDiv.innerHTML = `<div class="chat-bubble"><div class="chat-text bot-text-fade-in" style="color: red;">Lo siento, ha ocurrido un error de conexión mayor.<br>${error.message}</div></div>`;
+            
+            while (botMessageElement.children.length > 1) {
+                botMessageElement.removeChild(botMessageElement.lastChild);
+            }
+            botMessageElement.appendChild(errorDiv);
         }
-
-        // --- INICIO: Lógica para mostrar chunks crudos y parsear al final ---
-        let messageBeingTyped = ""; // Acumula el texto Markdown completo para el historial y para el parseo final
-        let streamEndedForThisMessage = false;
-
-        // Esta función se llama cuando el stream TERMINA ([END])
-        function finalizeAndParseBotResponse() {
-            document.getElementById('loading').style.display = 'none';
-            copyBtn.style.display = 'block';
-
-            if (typeof marked === 'object' && typeof marked.parse === 'function') {
-                textContainer.innerHTML = marked.parse(messageBeingTyped); // Parsear TODO el Markdown acumulado
-            } else {
-                // Fallback si marked.js no está cargado
-                textContainer.innerHTML = messageBeingTyped.replace(/\n/g, '<br>');
-            }
-
-            // Opcional: aplicar animación de fade-in al textContainer completo ahora que está parseado
-            textContainer.classList.remove('bot-message-render-fade-in'); // Para re-disparar si es necesario
-            void textContainer.offsetWidth; // Forzar reflow para reiniciar animación
-            textContainer.classList.add('bot-message-render-fade-in');
-
-            if (chatContentScroller) {
-                chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
-            }
-        }
-        
-        // Esta función se llama por CADA chunk de texto que llega del stream
-        function processIncomingRawChunk(newMarkdownChunk) {
-            messageBeingTyped += newMarkdownChunk; // Acumular el texto crudo
-
-            // Mostrar el texto crudo acumulado (Markdown tal cual llega)
-            // Esto mostrará los `|----|` etc. temporalmente
-            textContainer.innerHTML = messageBeingTyped.replace(/\n/g, '<br>');
-
-            document.getElementById('loading').style.display = 'none'; // Ocultar "..." al recibir primer texto
-            if (chatContentScroller) {
-                chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
-            }
-        }
-        // --- FIN: Lógica para mostrar chunks crudos y parsear al final ---
-
-        try {
-            const payloadForBackend = { history: conversationHistory };
-            const response = await fetch('/stream', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadForBackend)
-            });
-
-            if (!response.body) {
-                throw new Error("La respuesta no tiene cuerpo (body) para leer.");
-            }
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder('utf-8');
-            let done = false;
-
-            while (!done) {
-                const { value, done: doneReading } = await reader.read();
-                done = doneReading;
-
-                if (value) {
-                    const chunk = decoder.decode(value, { stream: true });
-                    chunk.split('\n').forEach(line => {
-                        if (line.startsWith('data: ')) {
-                            const payload = line.replace('data: ', '').trim();
-                            if (payload === '[END]') {
-                                streamEndedForThisMessage = true;
-                                if (messageBeingTyped.trim() !== "") {
-                                    const lastHistoryEntry = conversationHistory[conversationHistory.length - 1];
-                                    if (!lastHistoryEntry || !(lastHistoryEntry.role === "model" && lastHistoryEntry.parts[0].text === messageBeingTyped)) {
-                                        conversationHistory.push({ role: "model", parts: [{ text: messageBeingTyped }] });
-                                    }
-                                }
-                                finalizeAndParseBotResponse(); // <<-- LLAMAR A LA FUNCIÓN DE PARSEO FINAL
-                                return; 
-                            }
-                            if (payload === "") return; 
-
-                            try {
-                                const obj = JSON.parse(payload);
-                                if (obj.texto) {
-                                    processIncomingRawChunk(obj.texto); // <<-- PROCESAR CHUNK CRUDO
-                                } else if (obj.error) {
-                                    textContainer.innerHTML = `<span style="color:red;">⚠️ ${obj.error}</span>`;
-                                    streamEndedForThisMessage = true;
-                                    document.getElementById('loading').style.display = 'none';
-                                    copyBtn.style.display = 'none'; // No copiar errores
-                                    if (chatContentScroller) chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
-                                }
-                            } catch (e) {
-                                textContainer.innerHTML = `<span style="color:red;">⚠️ Error procesando chunk: ${e.message}</span>`;
-                                streamEndedForThisMessage = true;
-                                document.getElementById('loading').style.display = 'none';
-                                copyBtn.style.display = 'none';
-                                if (chatContentScroller) chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
-                            }
-                        }
-                    });
-                }
-            }
-            if (!streamEndedForThisMessage) { // Por si el stream termina sin un [END] explícito
-                streamEndedForThisMessage = true;
-                if (messageBeingTyped.trim() !== "") {
-                     const lastHistoryEntry = conversationHistory[conversationHistory.length - 1];
-                     if (!lastHistoryEntry || !(lastHistoryEntry.role === "model" && lastHistoryEntry.parts[0].text === messageBeingTyped)) {
-                        conversationHistory.push({ role: "model", parts: [{ text: messageBeingTyped }] });
-                    }
-                }
-                finalizeAndParseBotResponse(); // Parsear al final también en este caso
-            }
-        } catch (error) {
-            textContainer.innerHTML = `<div class="chat-text" style="color: red;">Lo siento, ha ocurrido un error.<br>${error.message}</div>`;
-            streamEndedForThisMessage = true;
-            document.getElementById('loading').style.display = 'none';
-            copyBtn.style.display = 'none';
-            if (chatContentScroller) chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
-        }
+        if (copyBtn) copyBtn.style.display = 'none';
+        if (chatContentScroller) chatContentScroller.scrollTop = chatContentScroller.scrollHeight;
     }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const miTextarea = document.getElementById('input');
+    if (miTextarea) {
+        // Esperamos un poquito (400ms) para que todo cargue y luego añadimos la clase
+        // para iniciar la transición del placeholder.
+        setTimeout(() => {
+            miTextarea.classList.add('animar-placeholder');
+        }, 400); // Puedes ajustar este retraso (en milisegundos)
+    }
+});
 </script>
 </div>
 </body>
